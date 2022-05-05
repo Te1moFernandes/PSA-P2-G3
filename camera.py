@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import argparse
+import readvideoroad
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
