@@ -18,6 +18,15 @@ except IndexError:
 
 import carla
 
+def process_image(image):
+    image = np.array(image.raw_data)
+    img = image.reshape((600,800,4))
+    img = img[:,:,:3]
+
+    cv2.imshow('img', img)
+    cv2.waitKey(1)
+
+
 def main():
     actorList = []
 
@@ -37,10 +46,10 @@ def main():
     camera_bp.set_attribute('image_size_x', '800')
     camera_bp.set_attribute('image_size_y', '600')
     camera_bp.set_attribute('fov', '90')
-    camera_bp.set_attribute('sensor_tick', '1.0')
+    #camera_bp.set_attribute('sensor_tick', '1.0')
     camera_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
     camera = world.spawn_actor(camera_bp, camera_transform, attach_to=vehicle)
-    camera.listen(lambda image: image.save_to_disk('output_da_camera/%d064.png'%image.frame))
+    camera.listen(lambda image: process_image(image))
     time.sleep(10)
 
 
