@@ -89,7 +89,9 @@ def region_of_interest(image):
 # ---------------------------------------VIDEO-------------------------------------#
 cap = cv2.VideoCapture("test2.mp4")
 while (cap.isOpened()):
-    _, frame = cap.read()
+    ret, frame = cap.read()
+
+#------------------------TRATAMENTO DE DADOS---------------------#
     # Uso da função canny/Tratamento da imagem---------------#
     canny_image = canny(frame)
     # Imagem cortada----------------------#
@@ -101,6 +103,8 @@ while (cap.isOpened()):
 
     # Juntar a imagem das linhas com a imagem principal (a cópia neste caso)-------------------------#
     combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+#------------------------FIM DO TRATAMENTO DE DADOS---------------------#
+
 
     # Show Video------------------#
     cv2.imshow("video", combo_image)
