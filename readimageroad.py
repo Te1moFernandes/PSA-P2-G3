@@ -62,6 +62,7 @@ def region_of_interest(image):
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, poligonos, 255)
     masked_image = cv2.bitwise_and(image, mask)
+    print(image.shape)
     return masked_image
 
 
@@ -85,3 +86,4 @@ combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
 # Show image------------------#
 cv2.imshow("result", combo_image)
 cv2.waitKey(0)
+

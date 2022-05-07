@@ -25,44 +25,48 @@ import carla
 
 def process_image(image):
     image = np.array(image.raw_data)
-    img = image.reshape((600,800,4))
+    img = image.reshape((704,1279,4))
     img = img[:,:,:3]
+    det_estrada(img)
 
-    cv2.imshow('img', img)
+    cv2.imshow('img', det_estrada(img))
     cv2.waitKey(1)
 
 
 
 def main():
     actorList = []
-    try:
-        client = carla.Client('localhost',2000)
-        client.set_timeout(10.0)
-        world = client.load_world('Town01')
-        print(client.get_available_map())
 
-        blueprintLibrary = world.get_blueprint_library()
-        vehicle_bp = blueprintLibrary.filter('cybertruck')[0]
-        transform = carla.Transform(carla.Location(x=130,y=195,z=40),carla.Rotation(yaw=180))
-        vehicle = world.spawn_actor(vehicle_bp, transform)
-        actorList.append(vehicle)
-        print('Ta spawnado')
-        print(actorList)
+    client = carla.Client('localhost',2000)
+    client.set_timeout(10.0)
+    world = client.load_world('Town07')
+    #print(client.get_available_map())
+
+    blueprintLibrary = world.get_blueprint_library()
+    vehicle_bp = blueprintLibrary.filter('cybertruck')[0]
+    transform = carla.Transform(carla.Location(x=130,y=195,z=40),carla.Rotation(yaw=180))
+    vehicle = world.spawn_actor(vehicle_bp, transform)
+    actorList.append(vehicle)
+    print('Ta spawnado')
+    print(actorList)
 
 
     camera_bp = blueprintLibrary.find('sensor.camera.rgb')
-    camera_bp.set_attribute('image_size_x', '800')
-    camera_bp.set_attribute('image_size_y', '600')
+    camera_bp.set_attribute('image_size_x', '1279')
+    camera_bp.set_attribute('image_size_y', '704')
     camera_bp.set_attribute('fov', '90')
     #camera_bp.set_attribute('sensor_tick', '1.0')
     camera_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
     camera = world.spawn_actor(camera_bp, camera_transform, attach_to=vehicle)
     camera.listen(lambda image: process_image(image))
-    time.sleep(10)
+    time.sleep(60)
+
 
 #------------------------------------------------- FIM DO CODIGO DA CAMARA DO CARLA----------------------------#
 
 #------------------------------------------------- CODIGO DA DETECAO DE ESTRADA--------------------------------#
+def det_estrada(image):
+
     def make_coordinates(image, line_parameters):
         slope, intercept = line_parameters
         y1 = image.shape[0]
@@ -119,30 +123,26 @@ def main():
         return masked_image
 
     # ---------------------------------------VIDEO-------------------------------------#
-    cap = cv2.VideoCapture("img")
-    while (cap.isOpened()):
-        ret, frame = cap.read()
+    # read image----------------------------#
 
-        # ------------------------TRATAMENTO DE DADOS---------------------#
-        # Uso da função canny/Tratamento da imagem---------------#
-        canny_image = canny(frame)
-        # Imagem cortada----------------------#
-        cropped_image = region_of_interest(canny_image)
-        # interseção dos pontos para criar as linhas melhores candidatas para o que interessa----------------------#
-        lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=100)
-        averaged_lines = average_slope_intercept(frame, lines)
-        line_image = display_lines(frame, averaged_lines)
+    # Cópia da imagem-------------------------#
+    lane_image = np.copy(image)
+    # Uso da função canny/Tratamento da imagem---------------#
+    canny_image = canny(lane_image)
+    # Imagem cortada----------------------#
+    cropped_image = region_of_interest(canny_image)
+    # interseção dos pontos para criar as linhas melhores candidatas para o que interessa----------------------#
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=100)
+    averaged_lines = average_slope_intercept(lane_image, lines)
+    line_image = display_lines(lane_image, averaged_lines)
 
-        # Juntar a imagem das linhas com a imagem principal (a cópia neste caso)-------------------------#
-        combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
-        # ------------------------FIM DO TRATAMENTO DE DADOS---------------------#
+    # Juntar a imagem das linhas com a imagem principal (a cópia neste caso)-------------------------#
+    combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
 
-        # Show Video------------------#
-        cv2.imshow("video", combo_image)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    cap.release()
-    cv2.destroyAllWindows()
+    # Show image------------------#
+    return combo_image
+
+
 
 #--------------------------------------------FIM DO CODIGO DE DETECAO DE ESTRADA----------------------------------------#
 
