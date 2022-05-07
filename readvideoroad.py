@@ -38,7 +38,7 @@ def main():
     try:
         client = carla.Client('localhost',2000)
         client.set_timeout(10.0)
-        world = client.load_world('Town07')
+        world = client.load_world('Town01')
         print(client.get_available_map())
 
         blueprintLibrary = world.get_blueprint_library()
