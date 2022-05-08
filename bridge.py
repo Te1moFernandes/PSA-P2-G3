@@ -13,6 +13,7 @@ Class that handle communication between CARLA and ROS
 
 import os
 import pkg_resources
+
 try:
     import queue
 except ImportError:
