@@ -44,7 +44,7 @@ def main():
 
     blueprintLibrary = world.get_blueprint_library()
     vehicle_bp = blueprintLibrary.filter('cybertruck')[0]
-    transform = carla.Transform(carla.Location(x=50,y=60,z=40),carla.Rotation(yaw=180))
+    transform = carla.Transform(carla.Location(x=50,y=50,z=40),carla.Rotation(yaw=180))
     vehicle = world.spawn_actor(vehicle_bp, transform)
     actorList.append(vehicle)
     print('Ta spawnado')
