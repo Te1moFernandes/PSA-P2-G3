@@ -26,7 +26,7 @@ import carla
 def process_image(image):
     image = np.array(image.raw_data)
     img = image.reshape((704,1279,4))
-    img = img[:,:,:3]
+    img = img[:, :, :3]
     det_estrada(img)
 
     cv2.imshow('img', det_estrada(img))
@@ -37,14 +37,14 @@ def process_image(image):
 def main():
     actorList = []
 
-    client = carla.Client('localhost',2000)
+    client = carla.Client('localhost', 2000)
     client.set_timeout(10.0)
     world = client.load_world('Town07')
     #print(client.get_available_map())
 
     blueprintLibrary = world.get_blueprint_library()
-    vehicle_bp = blueprintLibrary.filter('cybertruck')[0]
-    transform = carla.Transform(carla.Location(x=50,y=60,z=40),carla.Rotation(yaw=180))
+    vehicle_bp = blueprintLibrary.filter('model3')[0]
+    transform = carla.Transform(carla.Location(x=50, y=60, z=40), carla.Rotation(yaw=180))
     vehicle = world.spawn_actor(vehicle_bp, transform)
     actorList.append(vehicle)
     print('Ta spawnado')
