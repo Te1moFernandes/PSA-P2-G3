@@ -54,10 +54,20 @@ def display_lines(image, lines):
 
 # Criação da mascara e da area que interessa para o caso----------------#
 def region_of_interest(image):
+    print(image.shape)
     altura = image.shape[0]
-    # largura = image.shape[1]
+    largura = image.shape[1]
+    P1 = (round(largura/5), round(altura-1))
+    P2 = (round(largura/2), round(2/3*altura))
+    P3 = (round(4*largura/5), round(altura-1))
+    print(P1)
+    print(P2)
+    print(P3)
+    # poligonos = np.array([
+    #     [P1, P2, P3]
+    # ])
     poligonos = np.array([
-        [(200, altura), (1100, altura), (550, 250)]
+        [P1, P2, (550,250)]
     ])
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, poligonos, 255)
@@ -95,6 +105,12 @@ while (cap.isOpened()):
     canny_image = canny(frame)
     cropped_image = region_of_interest(canny_image)
     lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    print(lines)
+    if lines is None:
+        continue
+    print(len(lines))
+    if len(lines) < 3:
+        continue
     average_lines = average_slope_intercept(frame, lines)
     line_image = display_lines(frame, average_lines)
     combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
