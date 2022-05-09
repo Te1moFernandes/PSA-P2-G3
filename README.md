@@ -13,11 +13,14 @@ utilizando o eco sistema ROS para interface com o simulador.
 * pycharm
 * carla simulator
 ---
-## Comandos para inicializar:
+## Comandos para inicializar (terminal):
 
-**Carla:** 
+**CARLA:** 
 ```cd /opt/carla-simulator/```
 ```./CarlaUE4.sh -prefernvidia -quality-level=Low```
+
+**Código para gerar um veículo e definir uma câmera frontal:**
+```python3 camera.py```
 
 **Código para Deteção de Estrada:**
 ```python3 readvideoroad.py```
@@ -28,5 +31,8 @@ utilizando o eco sistema ROS para interface com o simulador.
 **Mudar de Mapa durante a utilização do carla:**
 ```cd /opt/carla-simulator/PythonAPI/util```
 ```python3 config.py -m TownXX```
+**ou**
+```python3 mudar_de_cidade.py```
+
 
 ---
