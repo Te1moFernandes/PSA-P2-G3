@@ -43,9 +43,10 @@ def main():
     #print(client.get_available_map())
 
     blueprintLibrary = world.get_blueprint_library()
-    vehicle_bp = blueprintLibrary.filter('cybertruck')[0]
-    transform = carla.Transform(carla.Location(x=50,y=60,z=40),carla.Rotation(yaw=180))
+    vehicle_bp = blueprintLibrary.filter('model3')[0]
+    transform = carla.Transform(carla.Location(x=50,y=60,z=2),carla.Rotation(yaw=180))
     vehicle = world.spawn_actor(vehicle_bp, transform)
+    vehicle.apply_control(carla.VehicleControl(throttle=0.15, brake=0)) #andar para a frente
     actorList.append(vehicle)
     print('Ta spawnado')
     print(actorList)
@@ -145,6 +146,8 @@ def det_estrada(image):
 
 
 #--------------------------------------------FIM DO CODIGO DE DETECAO DE ESTRADA----------------------------------------#
+
+
 
 if __name__ == '__main__':
     main()
