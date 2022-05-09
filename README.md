@@ -28,5 +28,8 @@ utilizando o eco sistema ROS para interface com o simulador.
 **Mudar de Mapa durante a utilização do carla:**
 ```cd /opt/carla-simulator/PythonAPI/util```
 ```python3 config.py -m TownXX```
+**Ou**
+```python3 mudar_de_cidade.py```
+
 
 ---
