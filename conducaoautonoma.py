@@ -29,7 +29,7 @@ def process_image(image):
     img = img[:,:,:3]
 
 
-    cv2.imshow('img', )
+    cv2.imshow('img', img)
     cv2.waitKey(1)
 
 
@@ -73,7 +73,7 @@ def main():
         pt1_avg_le = (0, 0)
         count_posi_num_le = 0
 
-        
+
         global Camera_image
         RGB_Camera_im = cv2.cvtColor(Camera_image, cv2.COLOR_BGR2GRAY)
         ############################################
