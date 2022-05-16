@@ -104,6 +104,7 @@ def det_estrada(image):
         return canny
 
     def display_lines(image, lines):
+
         line_image = np.zeros_like(image)
         if lines is not None:
             for x1, y1, x2, y2 in lines:
