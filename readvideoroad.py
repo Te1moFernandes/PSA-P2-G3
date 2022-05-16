@@ -112,10 +112,18 @@ def det_estrada(image):
 
     # Criação da mascara e da area que interessa para o caso----------------#
     def region_of_interest(image):
+
+        print(image.shape)
         altura = image.shape[0]
-        # largura = image.shape[1]
+        largura = image.shape[1]
+        P1 = (round(largura/5), round(altura-1))
+        P2 = (round(largura/2), round(1/3*altura))
+        P3 = (round(4*largura/5), round(altura-1))
+        print('P1=' + str(P1))
+        print('P2=' + str(P2))
+        print('P3=' + str(P3))
         poligonos = np.array([
-            [(200, altura), (1100, altura), (550, 250)]
+            [P1, P2, P3]
         ])
         mask = np.zeros_like(image)
         cv2.fillPoly(mask, poligonos, 255)

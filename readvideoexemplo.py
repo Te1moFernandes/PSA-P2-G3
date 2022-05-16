@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 
 def make_coordinates(image, line_parameters):
+
     slope, intercept = line_parameters
     y1 = image.shape[0]
     y2 = int(y1 * (3 / 5))
@@ -16,6 +17,7 @@ def make_coordinates(image, line_parameters):
 
 # Agrupar as linhas de acordo com o seu declive, caso o declive seja positivo são linhas da esquerda, caso contrário da direita (de acordo com a imagem)------------------#
 def average_slope_intercept(image, lines):
+
     left_fit = []
     right_fit = []
     for line in lines:
@@ -35,6 +37,7 @@ def average_slope_intercept(image, lines):
 
 
 def canny(image):
+
     # Obter imagem cinza-------------------#
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     # Diminuir "noise" e obter uma imagem mais suave--------------------#
@@ -45,6 +48,7 @@ def canny(image):
 
 
 def display_lines(image, lines):
+
     line_image = np.zeros_like(image)
     if lines is not None:
         for x1, y1, x2, y2 in lines:
@@ -54,20 +58,18 @@ def display_lines(image, lines):
 
 # Criação da mascara e da area que interessa para o caso----------------#
 def region_of_interest(image):
+    
     print(image.shape)
     altura = image.shape[0]
     largura = image.shape[1]
     P1 = (round(largura/5), round(altura-1))
-    P2 = (round(largura/2), round(2/3*altura))
+    P2 = (round(largura/2), round(1/3*altura))
     P3 = (round(4*largura/5), round(altura-1))
-    print(P1)
-    print(P2)
-    print(P3)
-    # poligonos = np.array([
-    #     [P1, P2, P3]
-    # ])
+    print('P1=' + str(P1))
+    print('P2=' + str(P2))
+    print('P3=' + str(P3))
     poligonos = np.array([
-        [P1, P2, (550,250)]
+        [P1, P2, P3]
     ])
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, poligonos, 255)
