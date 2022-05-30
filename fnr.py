@@ -125,7 +125,7 @@ def imageCallback(msg):
     # How to process the image to define the best angle and speed?
 
     # make a driving decision
-    #NÂO SEI COMO METER A LINHA DO MEIO DE ACORDO COM ESTE CODIGO FODA_SE o slope teria de ser infinito e o b infinito! (x= tal)
+    #NÂO SEI COMO METER A LINHA DO MEIO DE ACORDO COM ESTE CODIGO, o slope teria de ser infinito e o b infinito! (x= tal)
 
     #
     # #turn left
