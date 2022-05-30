@@ -50,7 +50,7 @@ def main():
     actorList.append(vehicle)
     print('Ta spawnado')
     print(actorList)
-#dormir
+
     camera_bp = blueprintLibrary.find('sensor.camera.rgb')
     camera_bp.set_attribute('image_size_x', '1279')
     camera_bp.set_attribute('image_size_y', '704')
