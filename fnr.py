@@ -60,6 +60,7 @@ def det_estrada(image):
     def display_lines(image, lines):
 
         line_image = np.zeros_like(image)
+
         if lines is not None:
             for x1, y1, x2, y2 in lines:
                 cv2.line(line_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
@@ -124,6 +125,8 @@ def imageCallback(msg):
     # How to process the image to define the best angle and speed?
 
     # make a driving decision
+    #NÂO SEI COMO METER A LINHA DO MEIO DE ACORDO COM ESTE CODIGO FODA_SE o slope teria de ser infinito e o b infinito! (x= tal)
+
     #
     # #turn left
     # if 0 < lane_center_x <= 318:
@@ -145,14 +148,14 @@ def imageCallback(msg):
     # else:
     #     speed = 0
     #     angle = 0
-    #
-    # # build a twist msg to publish
+
+    # build a twist msg to publish
     # twist = Twist()
     # twist.linear.x = speed
     # twist.angular.z = angle
     # global publisher
     # publisher.publish(twist)
-
+    #
 
 def main():
     rospy.init_node('driver')
