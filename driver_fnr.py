@@ -96,24 +96,24 @@ def imageCallback(msg):
 
     #print(middle_line)
 
-    for group in groups:
-        group['dist_to_middle_line'] = middle_line['xavg'] - group['xavg']
-
-    smallest_distance = 9999
-    for group in groups:
-        if group['dist_to_middle_line'] >= 0:
-            continue
-        elif group['dist_to_middle_line'] < smallest_distance:
-            smallest_distance = group['dist_to_middle_line']
-            right_line = group
-
-    smallest_distance = 9999
-    for group in groups:
-        if group['dist_to_middle_line'] <= 0:
-            continue
-        elif group['dist_to_middle_line'] < smallest_distance:
-            smallest_distance = group['dist_to_middle_line']
-            left_line = group
+    # for group in groups:
+    #     group['dist_to_middle_line'] = middle_line['xavg'] - group['xavg']
+    #
+    # smallest_distance = 9999
+    # for group in groups:
+    #     if group['dist_to_middle_line'] >= 0:
+    #         continue
+    #     elif group['dist_to_middle_line'] < smallest_distance:
+    #         smallest_distance = group['dist_to_middle_line']
+    #         right_line = group
+    #
+    # smallest_distance = 9999
+    # for group in groups:
+    #     if group['dist_to_middle_line'] <= 0:
+    #         continue
+    #     elif group['dist_to_middle_line'] < smallest_distance:
+    #         smallest_distance = group['dist_to_middle_line']
+    #         left_line = group
 
 
 
@@ -133,15 +133,15 @@ def imageCallback(msg):
         cv2.line(image_gui, point, point, color, 4)
         cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
 
-    if not right_line == None:
-        point = (int(right_line['xavg']), reference_y)
-        cv2.line(image_gui, point, point, color, 4)
-        cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
-
-    if not left_line == None:
-        point = (int(left_line['xavg']), reference_y)
-        cv2.line(image_gui, point, point, color, 4)
-        cv2.putText(image_gui, 'LL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
+    # if not right_line == None:
+    #     point = (int(right_line['xavg']), reference_y)
+    #     cv2.line(image_gui, point, point, color, 4)
+    #     cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
+    #
+    # if not left_line == None:
+    #     point = (int(left_line['xavg']), reference_y)
+    #     cv2.line(image_gui, point, point, color, 4)
+    #     cv2.putText(image_gui, 'LL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
 
     # make a driving decision
     #print(right_line['dist_to_middle'])
