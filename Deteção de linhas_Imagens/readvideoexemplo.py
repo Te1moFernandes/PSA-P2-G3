@@ -15,7 +15,8 @@ def make_coordinates(image, line_parameters):
     return np.array([x1, y1, x2, y2])
 
 
-# Agrupar as linhas de acordo com o seu declive, caso o declive seja positivo são linhas da esquerda, caso contrário da direita (de acordo com a imagem)------------------#
+# Agrupar as linhas de acordo com o seu declive, caso o declive seja positivo são linhas da esquerda, caso contrário da direita
+# (de acordo com a imagem)------------------#
 def average_slope_intercept(image, lines):
 
     left_fit = []
