@@ -39,5 +39,8 @@ utilizando o eco sistema ROS para interface com o simulador.
 
 
 # Explicação dos scripts e pastas
+ 
+## CARLA
 
-## 
+Contem todos os scripts e informação relacionada à CARLA 
+**wwv**
