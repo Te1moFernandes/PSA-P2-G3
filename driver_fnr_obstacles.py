@@ -42,7 +42,7 @@ def imageCallback(msg):
     ## convert to hsv
     hsv = cv2.cvtColor(image_gui, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, (36, 25, 25), (70, 255,255))
-
+    # cropped_mask = mask[0:320, 400:800]
     ## slice the green
 
     imask = mask > 0
@@ -51,7 +51,6 @@ def imageCallback(msg):
     cv2.imshow('mask', mask)
 
 
-    # Avoid obstacles
 
 
     # Save your OpenCV2 image as a jpeg
@@ -66,7 +65,7 @@ def imageCallback(msg):
     height2, width2 = mask.shape
     middle_x = int(width* 3 / 4)
     minimum_number_white_pixels = 5
-    minimum_number_green_pixels = 100
+    minimum_number_green_pixels = 5
 
     image_stacked = verticalStacking(image=image_thresh,
                                      y_limits=[reference_y-reference_y_delta, reference_y + reference_y_delta])
@@ -87,73 +86,49 @@ def imageCallback(msg):
 
     #print(green_xs)
 
-    groups_whites = []
-    # iterate through white_xs and create groups_whites
+    groups = []
+    # iterate through white_xs and create groups
     first = True
     group_idx = 0
     for x in white_xs:
         if first:
             group = {'idx': group_idx, 'xs': [x]}
-            groups_whites.append(group)
+            groups.append(group)
             group_idx += 1
             first = False
             continue
 
         # decide if a new group should be create
-        last_x = groups_whites[-1]['xs'][-1]
+        last_x = groups[-1]['xs'][-1]
         if abs(x - last_x) > 1:  # create new group
             group = {'idx': group_idx, 'xs': [x]}
-            groups_whites.append(group)
+            groups.append(group)
             group_idx += 1
         else:
-            groups_whites[-1]['xs'].append(x)
-
+            groups[-1]['xs'].append(x)
 
     # Compute the average x for each group
-    for group in groups_whites:
+    for group in groups:
         group['xavg'] = sum(group['xs']) / len(group['xs'])
 
     # Compute the distance between the average and the middle x
-    for group in groups_whites:
+    for group in groups:
         group['dist_to_middle'] = abs(middle_x - group['xavg'])
 
 
     # select middle line as the group which is closed to the middle of the image
     smallest_distance = 9999
-    for group in groups_whites:
+    for group in groups:
         if group['dist_to_middle'] < smallest_distance:
             smallest_distance = group['dist_to_middle']
             right_line = group
 
-    groups_greens = []
-    # iterate through greens_xs and create groups_greens
-    first2 = True
-    group_idx2 = 0
-    for x in green_xs:
-        if first2:
-            group = {'idx': group_idx, 'xs': [x]}
-            groups_greens.append(group)
-            group_idx2 += 1
-            first2 = False
-            continue
 
-        # decide if a new group should be create
-        last_x = groups_greens[-1]['xs'][-1]
-        if abs(x - last_x) > 1:  # create new group
-            group = {'idx': group_idx2, 'xs': [x]}
-            groups_greens.append(group)
-            group_idx2 += 1
-        else:
-            groups_greens[-1]['xs'].append(x)
-
-    for group in groups_greens:
-        group['xavg'] = sum(group['xs']) / len(group['xs'])
-
-    # for group in groups_whites:
+    # for group in groups:
     #     group['dist_to_middle_line'] = middle_line['xavg'] - group['xavg']
     #
     # smallest_distance = 9999
-    # for group in groups_whites:
+    # for group in groups:
     #     if group['dist_to_middle_line'] >= 0:
     #         continue
     #     elif group['dist_to_middle_line'] < smallest_distance:
@@ -161,7 +136,7 @@ def imageCallback(msg):
     #         right_line = group
     #
     # smallest_distance = 9999
-    # for group in groups_whites:
+    # for group in groups:
     #     if group['dist_to_middle_line'] <= 0:
     #         continue
     #     elif group['dist_to_middle_line'] < smallest_distance:
@@ -180,12 +155,6 @@ def imageCallback(msg):
 
     for x in green_xs:
         cv2.line(image_gui, (x,reference_y_2), (x, reference_y_2), (255,0,0), 4)
-
-    if not green_xs == None:
-        point = (int(green_xs['xavg']), reference_y_2)
-        color = (255,255,0)
-        cv2.line(image_gui, point, point, color, 4)
-        cv2.putText(image_gui, 'MidPoint', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
 
     if not right_line == None:
         point = (int(right_line['xavg']), reference_y)
