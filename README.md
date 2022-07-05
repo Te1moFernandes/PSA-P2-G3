@@ -38,6 +38,10 @@ utilizando o eco sistema ROS para interface com o simulador.
 ---
 
 
+https://user-images.githubusercontent.com/92921814/177432412-884904ab-f8b8-4444-ac9c-fb112c3752e5.mp4
+
+
+
 # Explicação dos scripts e pastas
  
 ## CARLA:
