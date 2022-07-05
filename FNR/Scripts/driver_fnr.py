@@ -1,14 +1,16 @@
 #! /usr/bin/python3
 
 # rospy for the subscriber
+import time
 from copy import deepcopy
 
 import rospy
 
+import numpy as np
+
 # OpenCV2 for saving an image
 import cv2
 from vertical_stacking import verticalStacking
-from vertical_stacking import horizontalStacking
 from geometry_msgs.msg import Twist
 
 # ROS Image message
@@ -36,6 +38,56 @@ def imageCallback(msg):
     # Preprocessing
     image_gui = deepcopy(image_rgb)
     image_gray = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)  # convert to grayscale
+    hsv = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2HSV) #converter imagens azuis
+    lower_blue = np.array([80, 50, 50], np.uint8)  # example value
+    upper_blue = np.array([130, 255, 255], np.uint8)
+    lower_red = np.array([0, 50, 50], np.uint8)
+    upper_red = np.array([10, 255, 255], np.uint8)
+    blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    red_mask = cv2.inRange(hsv, lower_red, upper_red)
+    kernal = np.ones((5, 5), "uint8")
+    red_mask = cv2.dilate(red_mask, kernal)
+    res_red = cv2.bitwise_and(image_gui, image_gui,
+                              mask=red_mask)
+    blue_mask = cv2.dilate(blue_mask, kernal)
+    res_blue = cv2.bitwise_and(image_gui, image_gui,
+                               mask=blue_mask)
+
+
+    #Cor vermelha
+    contours, hierarchy = cv2.findContours(red_mask,
+                                           cv2.RETR_TREE,
+                                           cv2.CHAIN_APPROX_SIMPLE)
+
+    for pic, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if (area > 300):
+            x, y, w, h = cv2.boundingRect(contour)
+            image_gui = cv2.rectangle(image_gui, (x, y),
+                                       (x + w, y + h),
+                                       (0, 0, 255), 2)
+
+            cv2.putText(image_gui, "Sinal de Perigo/Proibicao", (x, y+50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+                        (0, 0, 255))
+
+
+    #Cor azul
+    contours, hierarchy = cv2.findContours(blue_mask,
+                                           cv2.RETR_TREE,
+                                           cv2.CHAIN_APPROX_SIMPLE)
+    for pic, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if (area > 300):
+            x, y, w, h = cv2.boundingRect(contour)
+            image_gui = cv2.rectangle(image_gui, (x, y),
+                                       (x + w, y + h),
+                                       (255, 0, 0), 2)
+
+            cv2.putText(image_gui, "Sinal de Obrigacao/Informacao", (x, y+50),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.7, (255, 0, 0))
+
     _, image_thresh = cv2.threshold(image_gray, 127, 255, cv2.THRESH_BINARY)  # thresholding
 
     # Save your OpenCV2 image as a jpeg
@@ -51,7 +103,7 @@ def imageCallback(msg):
     image_stacked = verticalStacking(image=image_thresh,
                                      y_limits=[reference_y-reference_y_delta, reference_y + reference_y_delta])
 
-    # search for white pixels in stacked image from left to right
+    # search for white pixels in stacked image from lert to right
     white_xs = []
     for x in range(0, width):
         if image_stacked[x] > minimum_number_white_pixels:
@@ -116,7 +168,10 @@ def imageCallback(msg):
     #         smallest_distance = group['dist_to_middle_line']
     #         left_line = group
 
-    print(right_line)
+
+
+    #print(right_line)
+
 
 
     # -------------------------------------------
@@ -129,32 +184,56 @@ def imageCallback(msg):
         point = (int(right_line['xavg']), reference_y)
         color = (0, 255, 255)
         cv2.line(image_gui, point, point, color, 4)
-        cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
+        cv2.putText(image_gui, 'Linha Guia', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
 
-    # if not right_line == None:
-    #     point = (int(right_line['xavg']), reference_y)
-    #     cv2.line(image_gui, point, point, color, 4)
-    #     cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
-    #
-    # if not left_line == None:
-    #     point = (int(left_line['xavg']), reference_y)
-    #     cv2.line(image_gui, point, point, color, 4)
-    #     cv2.putText(image_gui, 'LL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
+    #if not right_line == None:
+        #point = (int(right_line['xavg']), reference_y)
+        #cv2.line(image_gui, point, point, color, 4)
+        #cv2.putText(image_gui, 'RL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
+
+    #if not left_line == None:
+        #point = (int(left_line['xavg']), reference_y)
+        #cv2.line(image_gui, point, point, color, 4)
+        #cv2.putText(image_gui, 'LL', point, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1, cv2.LINE_AA)
 
     # make a driving decision
     #print(right_line['dist_to_middle'])
-
     kp = 0.005
+    #ks = 0.005
 
     angle = kp * (middle_x - right_line['xavg'])
 
+    #speed = ks * (1/abs(middle_x - right_line['xavg']))
     speed = 0.7
+
+
+
+
+
+
+
+    print(len(groups))
+    print(height)
+    print(width)
+    print(round(height))
+
+    if len(groups)>5:
+        cv2.putText(image_gui, "ALERTA PASSADEIRA", (150, 150) , cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 5)
+    # for group in groups:
+    #     element_size=(len(group['xs']))
+    #     if element_size>200.:
+    #         print('ALERTA PASSADEIRA')
+
+
 
 
     # cv2.imshow('image_rgb', image_rgb)
     # cv2.imshow('image_gray', image_gray)
     # cv2.imshow('image_thresh', image_thresh)
     cv2.imshow('image_gui', image_gui)
+    #cv2.imshow('mask', mask)
+    #cv2.imshow('Sinais de Obrigação/Informação', res_blue)
+    #cv2.imshow('Sinais de Perigo/Proibição', res_red)
     cv2.waitKey(20)
 
     # build a twist msg to publish
