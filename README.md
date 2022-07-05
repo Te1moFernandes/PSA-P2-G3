@@ -45,4 +45,11 @@ utilizando o eco sistema ROS para interface com o simulador.
 Contem todos os scripts e informação relacionada à CARLA 
 
 
-**wwv**
+**camera.py**
+Script para abrir uma câmera no CARLA com determinadas configurações, em uma determinada cidade.
+
+**conducaoautonoma.py**
+Início do script para condução autónoma através da deteção das linhas.
+
+**lidar3d.py**
+
